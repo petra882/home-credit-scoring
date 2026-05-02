@@ -70,3 +70,16 @@
 - **Matplotlib, Seaborn** — визуализация (barplot, heatmap)
 - **Git/GitHub** — контроль версий
 
+## Данные
+
+Датасет: [Home Credit Default Risk](https://www.kaggle.com/c/home-credit-default-risk) на Kaggle.
+
+## Автор
+
+**Артеменко Пётр**  
+Студент ТюмГУ, направление «Математическое обеспечение и администрирование информационных систем»  
+[GitHub](https://github.com/petra882)
+
+## Статус проекта
+
+🔄 В процессе. Планируется: Feature Engineering, ML-моделирование (RandomForest, CatBoost), FastAPI + Docker.

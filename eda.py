@@ -3,6 +3,7 @@ import polars as pl
 import matplotlib
 import seaborn as sns
 import numpy
+import pandas as pd
 
 """
 Доли невернувших по критерию наличия имущества
@@ -51,3 +52,82 @@ plt.bar(names, total)
 plt.title("Доля невернушвших по возрастам")
 plt.show()
 """
+
+"""
+total_ds = pl.read_csv("ds/application_train.csv", try_parse_dates= True)
+result = total_ds.select(
+    pl.col("TARGET"),
+    pl.col("NAME_INCOME_TYPE"),
+).group_by(pl.col("NAME_INCOME_TYPE")).agg(pl.col("TARGET").count().alias("total"), pl.col("TARGET").sum().alias("no_ret"))
+
+result = result.with_columns(
+    (pl.col("no_ret")/pl.col("total")*100).alias("percent")
+)
+sns.barplot(data = result, x = "percent", y = "NAME_INCOME_TYPE",)
+plt.title("Доля невозвратов по типу занятости")
+print(result)
+"""
+
+"""
+heatmap по типу кредита, типу занятости и доле невоозвратов
+total_ds = pl.read_csv("ds/application_train.csv", try_parse_dates= True)
+result = total_ds.select(
+    pl.col("TARGET"),
+    pl.col("NAME_CONTRACT_TYPE"),
+    pl.col("NAME_INCOME_TYPE")
+).group_by(pl.col("NAME_CONTRACT_TYPE"), pl.col("NAME_INCOME_TYPE")).agg(pl.col("TARGET").count().alias("total"),
+            pl.col("TARGET").sum().alias("no_ret"))
+result = result.with_columns(
+    (pl.col("no_ret") / pl.col("total") * 100).alias("percent")
+)
+
+heatmap_result = result.pivot(
+    index="NAME_INCOME_TYPE",
+    on="NAME_CONTRACT_TYPE",
+    values="percent"
+)
+
+heatmap_pd = heatmap_result.to_pandas().set_index("NAME_INCOME_TYPE")
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(
+    heatmap_pd,
+    annot=True,
+    fmt=".1f",
+    cmap="YlOrRd",
+    cbar_kws={'label': 'Доля невозвратов (%)'},
+    linewidths=0.5,
+    linecolor='white'
+)
+print(heatmap_pd)
+plt.tight_layout()
+plt.show()
+
+"""
+"""
+Важный инсайт!
+barplot доли невозвратов по возрасту и типу кредита
+total_ds = pl.read_csv("ds/application_train.csv", try_parse_dates= True)
+result_all = total_ds.select(
+    pl.col("TARGET"),
+    (pl.col("DAYS_BIRTH")*-1//365).cut([17,25,30,45,50],
+                                       labels=["18-","18-25","25-30","30-45","45-50","50+"]).alias("decade"),
+    pl.col("NAME_CONTRACT_TYPE")
+).group_by(pl.col("decade"), pl.col("NAME_CONTRACT_TYPE")).agg(pl.col("TARGET").count().alias("counter"),
+                         pl.col("TARGET").sum().alias("no_ret")).sort(pl.col("decade"))
+result_all = result_all.with_columns(
+    (pl.col("no_ret")/pl.col("counter")*100).alias("no_ret_percent")
+)
+
+result_all_pd = result_all.to_pandas()
+
+sns.barplot(data = result_all_pd, x = "no_ret_percent", y = "decade",hue="NAME_CONTRACT_TYPE")
+plt.title("Зависимость невозвратов от типа кредита и возраста")
+plt.show()
+
+"""
+
+
+
+
+

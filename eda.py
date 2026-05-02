@@ -124,10 +124,15 @@ result_all_pd = result_all.to_pandas()
 sns.barplot(data = result_all_pd, x = "no_ret_percent", y = "decade",hue="NAME_CONTRACT_TYPE")
 plt.title("Зависимость невозвратов от типа кредита и возраста")
 plt.show()
-
 """
 
-
-
-
+total_ds = pl.read_csv("ds/application_train.csv", try_parse_dates= True)
+result = total_ds.select(
+    pl.col("NAME_CONTRACT_TYPE"),
+    pl.col("AMT_INCOME_TOTAL"),
+    pl.col("AMT_CREDIT")
+).group_by(pl.col("NAME_CONTRACT_TYPE")).agg(pl.col("AMT_INCOME_TOTAL").median().alias("mean_income_total"),
+    pl.col("AMT_CREDIT").median().alias("credit_mean"),
+    (pl.col("AMT_CREDIT")/pl.col("AMT_INCOME_TOTAL")).median().alias("credit_to_income_mean"))
+print(result)
 

@@ -99,29 +99,47 @@
 
 **Бизнес-сценарий:** Модель используется как первый этап pre-screening: 73% надёжных заёмщиков получают кредит автоматически, 27% направляются на ручную проверку. Нагрузка на отдел верификации снижается почти в 4 раза.
 
-### Важность признаков (Feature Importance)
-
-![Feature Importance](plots/важность%20признаков%20catboost.png)
+Важность признаков:
 
 Топ-3 признака: `EXT_SOURCE_3`, `EXT_SOURCE_2`, `EXT_SOURCE_1` — внешние скоринговые баллы. Самостоятельно созданный признак `credit_to_income` вошёл в топ-4, подтвердив гипотезу EDA.
 
-## Используемые технологии
+## API и Docker
 
-- **Python (Polars)** — обработка данных, агрегация, фильтрация, pivot
-- **Matplotlib, Seaborn** — визуализация (barplot, heatmap)
-- **CatBoost, Scikit-learn** — ML-моделирование
-- **Git/GitHub** — контроль версий
+Модель обернута в REST API (FastAPI) и упакована в Docker-контейнер.
 
-## Данные
+**Эндпоинт:** `POST /predict`
 
-Датасет: [Home Credit Default Risk](https://www.kaggle.com/c/home-credit-default-risk) на Kaggle.
+**Пример запроса:**
+```json
+{
+  "age_years": 55,
+  "credit_to_income": 1.5,
+  "EXT_SOURCE_1": 0.75,
+  "EXT_SOURCE_2": 0.80,
+  "EXT_SOURCE_3": 0.78,
+  "NAME_CONTRACT_TYPE": "Revolving loans",
+  "NAME_INCOME_TYPE": "Pensioner",
+  "CODE_GENDER": "F"
+}
+```
+Используемые технологии
+Python (Polars) — обработка данных, агрегация, фильтрация, pivot
 
-## Автор
+Matplotlib, Seaborn — визуализация (barplot, heatmap)
 
-**Артеменко Пётр**  
-Студент ТюмГУ, направление «Математическое обеспечение и администрирование информационных систем»  
-[GitHub](https://github.com/petra882)
+CatBoost, Scikit-learn — ML-моделирование
 
-## Статус проекта
+FastAPI, Docker — API и контейнеризация
 
-🔄 В процессе. Планируется: FastAPI + Docker.
+Git/GitHub — контроль версий
+
+Данные
+Датасет: Home Credit Default Risk на Kaggle.
+
+Автор
+Артеменко Пётр
+Студент ТюмГУ, направление «Математическое обеспечение и администрирование информационных систем»
+GitHub
+
+Статус проекта
+✅ Завершён. Полный цикл: EDA → Feature Engineering → ML → API → Docker.
